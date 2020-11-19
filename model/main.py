@@ -82,7 +82,7 @@ def tweeter(post_dict, post_ids):
             except:
                 print('An error occurred')
         else:
-            print("[bot] Already posted")
+            print("[bot]  Already posted")
 
 
 if __name__ == '__main__':
