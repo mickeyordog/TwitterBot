@@ -44,14 +44,14 @@ def add_id_to_file(post_id):
 
 
 def main():
-    subreddit = setup_connection_reddit('pixelart')
+    subreddit = setup_connection_reddit('memes')
     post_dict, post_ids = tweet_creator(subreddit)
     tweeter(post_dict, post_ids)
 
 
 def tweeter(post_dict, post_ids):
-    auth = tweepy.OAuthHandler(pixel_twitter_consumer_key, pixel_twitter_consumer_secret)
-    auth.set_access_token(pixel_twitter_access_token, pixel_twitter_access_token_secret)
+    auth = tweepy.OAuthHandler(food_twitter_consumer_key, food_twitter_consumer_secret)
+    auth.set_access_token(food_twitter_access_token, food_twitter_access_token_secret)
     api = tweepy.API(auth)
     posted = 0
     for post, post_id in zip(post_dict, post_ids):
@@ -61,24 +61,34 @@ def tweeter(post_dict, post_ids):
                 url = post_dict[post][0]
                 short_link = post_dict[post][1]
                 user = post_dict[post][2]
+                format = '.jpg'
 
-                if '.png' not in url:
-                    print("not a png")
+                if format not in url:
+                    print("not a", format)
                     continue
+
+                image_src = 'image' + format
 
                 print("[bot] Posting this link on twitter")
                 print(f"\"{post}\" by u/{user} \n{short_link} #pixelart #reddit #gamedev #indiegame #art")
 
                 r = requests.get(url)
-                with open('image.png', 'wb') as f:
+                with open(image_src, 'wb') as f:
                     f.write(r.content)
 
-                api.update_with_media(filename='image.png',
-                                      status=f"\"{post}\" by u/{user} \n{short_link} #pixelart #reddit #gamedev "
-                                             f"#indiegame #art")
+                print('Wrote contents to file')
+
+                include_link = False
+                link = ''
+                if include_link:
+                    link = short_link
+
+                api.update_with_media(filename=image_src,
+                                      status=f"{post} (u/{user})\n{link} #funny #meme")
                 add_id_to_file(post_id)
+
                 posted += 1
-                time.sleep(180)
+                time.sleep(10)
             except:
                 print('An error occurred')
         else:
